@@ -63,14 +63,6 @@ class WorldBankData(object):
         self.gdp = 0
 
 
-def prompt():
-    print "\n"
-    print "------------------------------------------------------------------"
-    print "--- Price Elasticity Calculator for International Traffic Data ---"
-    print "------------------------------------------------------------------"
-    pass
-
-
 def get_fcc_entry(path):
     # print path
     entries = []
@@ -332,13 +324,21 @@ def print_world_bank_data_structure():
         print item
 
 
+def prompt():
+    print "\n"
+    print "------------------------------------------------------------------"
+    print "--- Price Elasticity Calculator for International Traffic Data ---"
+    print "------------------------------------------------------------------"
+    parse_fcc_data()
+    parse_world_bank_data()
+    print "------------------------------------------------------------------"
+    pass
+
+
 def main():
     prompt()
-    parse_fcc_data()
     # print_fcc_data_structure()
-    parse_world_bank_data()
     # print_world_bank_data_structure()
-    print "------------------------------------------------------------------"
 
 
 if __name__ == "__main__":
