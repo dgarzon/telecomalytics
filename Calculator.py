@@ -3,6 +3,8 @@ import os
 import time
 import xlrd
 import collections
+import csv
+from itertools import izip
 from FCCEntry import FCCEntry
 from WBEntry import WBEntry
 
@@ -349,8 +351,6 @@ def process_fcc_data():
     global REG
     for key in sorted(FCC):
         for value in FCC[int(key)]:
-            print key
-            print value.country_name
             wb_item = [item for item in WB
                        if item.country_name == value.country_name][0]
             for wb_value in wb_item.data:
@@ -367,21 +367,19 @@ def process_fcc_data():
 
 def write_regression_files():
     for k in sorted(REG):
-        if k == "Andorra":
-            filename = os.path.join(ROOT_DIR + "/REG", str(k) + ".txt")
-            file = open(filename, "w")
+        filename = os.path.join(ROOT_DIR + "/REG", str(k) + ".csv")
+        with open(filename, 'wb') as fp:
+            csv_writer = csv.writer(fp, delimiter=',')
+            csv_writer.writerow(['', 'GDP', 'Price', 'Quantity'])
             for key, val in REG[k].iteritems():
-                output = str(val["GDP"]) + "\t\t\t" + str(val["price"])\
-                    + "\t\t\t" + str(val["quantity"]) + "\n"
-                file.write(output)
+                csv_writer.writerow([key, str(val["GDP"]),
+                                    str(val["price"]),
+                                    str(val["quantity"])])
 
 
 def main():
     prompt()
     write_regression_files()
-    # print_regression_structure()
-    # print_fcc_data_structure()
-    # print_world_bank_data_structure()
 
 
 if __name__ == "__main__":
