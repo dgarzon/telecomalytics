@@ -68,7 +68,6 @@ def prompt():
     print "------------------------------------------------------------------"
     print "--- Price Elasticity Calculator for International Traffic Data ---"
     print "------------------------------------------------------------------"
-    print "\n"
     pass
 
 
@@ -314,6 +313,7 @@ def parse_world_bank_data():
     for subdir, dirs, files in os.walk(ROOT_DIR + "/WB"):
         for file in files:
             if file.endswith(".xls"):
+                print file
                 entries = get_world_bank_entry(os.path.join(subdir, file))
                 WB = entries
     pass
@@ -334,10 +334,11 @@ def print_world_bank_data_structure():
 
 def main():
     prompt()
-    # parse_fcc_data()
+    parse_fcc_data()
     # print_fcc_data_structure()
     parse_world_bank_data()
-    print_world_bank_data_structure()
+    # print_world_bank_data_structure()
+    print "------------------------------------------------------------------"
 
 
 if __name__ == "__main__":
