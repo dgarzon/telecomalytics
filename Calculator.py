@@ -34,7 +34,6 @@ class TransittingTheUSByCountryOfOrigin(object):
     """docstring for TransittingTheUSByCountryOfOrigin"""
     def __init__(self):
         super(TransittingTheUSByCountryOfOrigin, self).__init__()
-        self.num_of_minutes = 0
         self.receipt_from_foreign_carriers = 0
         self.payout_to_foreign_carriers = 0
         self.retained_revenues = 0
@@ -98,6 +97,9 @@ def get_fcc_entry(path):
             cell_type = worksheet.cell_type(curr_row, curr_cell)
             cell_value = worksheet.cell_value(curr_row, curr_cell)
 
+            if cell_value == "n.a.":
+                cell_value = 0.0
+
             if curr_cell == 0:
                 entry.country_name = str(cell_value)
                 pass
@@ -131,26 +133,18 @@ def get_fcc_entry(path):
                     float(cell_value)
                 pass
             elif curr_cell == 9:
-                if cell_value == "N/A":
-                    transitting_the_us_by_country_of_origin.num_of_minutes =\
-                        0.0
-                else:
-                    transitting_the_us_by_country_of_origin.num_of_minutes =\
-                        float(cell_value)
-                pass
-            elif curr_cell == 10:
                 transitting_the_us_by_country_of_origin.receipt_from_foreign_carriers =\
                     float(cell_value)
                 pass
-            elif curr_cell == 11:
+            elif curr_cell == 10:
                 transitting_the_us_by_country_of_origin.payout_to_foreign_carriers =\
                     float(cell_value)
                 pass
-            elif curr_cell == 12:
+            elif curr_cell == 11:
                 transitting_the_us_by_country_of_origin.retained_revenues =\
                     float(cell_value)
                 pass
-            elif curr_cell == 13:
+            elif curr_cell == 12:
                 total_us_carriers.retained_revenues = float(cell_value)
                 pass
             else:
@@ -177,7 +171,8 @@ def get_fcc_entry(path):
 def parse_fcc_data():
     for subdir, dirs, files in os.walk(ROOT_DIR + "/FCC"):
         for file in files:
-            if file.endswith(".xls") and file == "2012.xls":
+            if file.endswith(".xls"):
+                print file
                 entries = get_fcc_entry(os.path.join(subdir, file))
                 FCC[str(os.path.splitext(file)[0])] = entries
 
@@ -203,7 +198,7 @@ def print_fcc_data_structure():
 def main():
     prompt()
     parse_fcc_data()
-
+    # print_fcc_data_structure()
     # parse_world_bank_data()
 
 
