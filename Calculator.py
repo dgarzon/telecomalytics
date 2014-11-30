@@ -2,6 +2,7 @@ import sys
 import os
 import time
 import xlrd
+import collections
 from FCCEntry import FCCEntry
 from WBEntry import WBEntry
 
@@ -9,6 +10,7 @@ from WBEntry import WBEntry
 ROOT_DIR = "."
 FCC = {}
 WB = []
+REG = collections.defaultdict(lambda: collections.defaultdict(dict))
 
 
 class TrafficBilledInTheUSA(object):
@@ -101,7 +103,7 @@ def get_fcc_entry(path):
                 cell_value = 0.0
 
             if curr_cell == 0:
-                entry.country_name = str(cell_value)
+                entry.country_name = str(cell_value).rstrip()
                 pass
             elif curr_cell == 1:
                 traffic_billed_in_the_us.num_of_messages = float(cell_value)
@@ -169,12 +171,13 @@ def get_fcc_entry(path):
 
 
 def parse_fcc_data():
+    global FCC
     for subdir, dirs, files in os.walk(ROOT_DIR + "/FCC"):
         for file in files:
             if file.endswith(".xls"):
                 print file
                 entries = get_fcc_entry(os.path.join(subdir, file))
-                FCC[str(os.path.splitext(file)[0])] = entries
+                FCC[int(os.path.splitext(file)[0])] = entries
 
     pass
 
@@ -324,6 +327,12 @@ def print_world_bank_data_structure():
         print item
 
 
+def print_regression_structure():
+    for key, value in REG.iteritems():
+        print key
+        print value
+
+
 def prompt():
     print "\n"
     print "------------------------------------------------------------------"
@@ -331,12 +340,46 @@ def prompt():
     print "------------------------------------------------------------------"
     parse_fcc_data()
     parse_world_bank_data()
+    process_fcc_data()
     print "------------------------------------------------------------------"
     pass
 
 
+def process_fcc_data():
+    global REG
+    for key in sorted(FCC):
+        for value in FCC[int(key)]:
+            print key
+            print value.country_name
+            wb_item = [item for item in WB
+                       if item.country_name == value.country_name][0]
+            for wb_value in wb_item.data:
+                if wb_value["year"] == key:
+                    REG[value.country_name][key]["GDP"] = wb_value["gdp"]
+
+            REG[value.country_name][key]["price"] =\
+                value.traffic_billed_in_usa["us_carrier_revenues"] /\
+                value.traffic_billed_in_usa["num_of_minutes"]
+
+            REG[value.country_name][key]["quantity"] =\
+                value.traffic_billed_in_usa["num_of_minutes"]
+
+
+def write_regression_files():
+    for k in sorted(REG):
+        if k == "Andorra":
+            filename = os.path.join(ROOT_DIR + "/REG", str(k) + ".txt")
+            file = open(filename, "w")
+            for key, val in REG[k].iteritems():
+                output = str(val["GDP"]) + "\t\t\t" + str(val["price"])\
+                    + "\t\t\t" + str(val["quantity"]) + "\n"
+                file.write(output)
+
+
 def main():
     prompt()
+    write_regression_files()
+    # print_regression_structure()
     # print_fcc_data_structure()
     # print_world_bank_data_structure()
 
