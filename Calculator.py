@@ -19,6 +19,8 @@ FCC = {}
 WB = []
 REG = collections.defaultdict(lambda: collections.defaultdict(dict))
 COUNTRIES = []
+YEARS = [1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
+         2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012]
 
 
 class TrafficBilledInTheUSA(object):
@@ -217,94 +219,8 @@ def get_world_bank_entry(path):
                 entry.country_name = str(cell_value)
             else:
                 data = WorldBankData()
-
-                if curr_cell == 1:
-                    data.year = 1992
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 2:
-                    data.year = 1993
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 3:
-                    data.year = 1994
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 4:
-                    data.year = 1995
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 5:
-                    data.year = 1996
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 6:
-                    data.year = 1997
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 7:
-                    data.year = 1998
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 8:
-                    data.year = 1999
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 9:
-                    data.year = 2000
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 10:
-                    data.year = 2001
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 11:
-                    data.year = 2002
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 12:
-                    data.year = 2003
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 13:
-                    data.year = 2004
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 14:
-                    data.year = 2005
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 15:
-                    data.year = 2006
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 16:
-                    data.year = 2007
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 17:
-                    data.year = 2008
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 18:
-                    data.year = 2009
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 19:
-                    data.year = 2010
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 20:
-                    data.year = 2011
-                    data.gdp = float(cell_value)
-                    pass
-                elif curr_cell == 21:
-                    data.year = 2012
-                    data.gdp = float(cell_value)
-                    pass
-                else:
-                    print "Error: Cell index out of supported range."
-
+                data.year = YEARS[curr_cell - 1]
+                data.gdp = float(cell_value)
                 entry.data.append(data.__dict__)
         entries.append(entry)
 
