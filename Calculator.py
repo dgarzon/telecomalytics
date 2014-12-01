@@ -12,6 +12,7 @@ import pprint as pp
 from itertools import izip
 from FCCEntry import FCCEntry
 from WBEntry import WBEntry
+from Helpers import *
 
 
 ROOT_DIR = "."
@@ -21,58 +22,6 @@ REG = collections.defaultdict(lambda: collections.defaultdict(dict))
 COUNTRIES = []
 YEARS = [1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
          2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012]
-
-
-class TrafficBilledInTheUSA(object):
-    """docstring for TrafficBilledInTheUSA"""
-    def __init__(self):
-        super(TrafficBilledInTheUSA, self).__init__()
-        self.num_of_messages = 0
-        self.num_of_minutes = 0
-        self.us_carrier_revenues = 0
-        self.payout_to_foreign_carriers = 0
-        self.retained_revenues = 0
-
-
-class OriginatingOrTerminatingInTheUS(object):
-    """docstring for OriginatingOrTerminatingInTheUS"""
-    def __init__(self):
-        super(OriginatingOrTerminatingInTheUS, self).__init__()
-        self.num_of_messages = 0
-        self.num_of_minutes = 0
-        self.receipt_from_foreign_carriers = 0
-
-
-class TransittingTheUSByCountryOfOrigin(object):
-    """docstring for TransittingTheUSByCountryOfOrigin"""
-    def __init__(self):
-        super(TransittingTheUSByCountryOfOrigin, self).__init__()
-        self.receipt_from_foreign_carriers = 0
-        self.payout_to_foreign_carriers = 0
-        self.retained_revenues = 0
-
-
-class TrafficBilledInForeignCountries(object):
-    """docstring for TrafficBilledInForeignCountries"""
-    def __init__(self):
-        super(TrafficBilledInForeignCountries, self).__init__()
-        self.originating_or_terminating_in_the_us = {}
-        self.transitting_the_us_by_country_of_origin = {}
-
-
-class TotalUSCarriers(object):
-    """docstring for TotalUSCarriers"""
-    def __init__(self):
-        super(TotalUSCarriers, self).__init__()
-        self.retained_revenues = 0
-
-
-class WorldBankData(object):
-    """docstring for WorldBankData"""
-    def __init__(self):
-        super(WorldBankData, self).__init__()
-        self.year = 0
-        self.gdp = 0
 
 
 def get_fcc_entry(path):
