@@ -4,6 +4,11 @@ import time
 import xlrd
 import collections
 import csv
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+import math
+import pprint as pp
 from itertools import izip
 from FCCEntry import FCCEntry
 from WBEntry import WBEntry
@@ -13,6 +18,7 @@ ROOT_DIR = "."
 FCC = {}
 WB = []
 REG = collections.defaultdict(lambda: collections.defaultdict(dict))
+COUNTRIES = []
 
 
 class TrafficBilledInTheUSA(object):
@@ -366,20 +372,78 @@ def process_fcc_data():
 
 
 def write_regression_files():
+    global COUNTRIES
     for k in sorted(REG):
         filename = os.path.join(ROOT_DIR + "/REG", str(k) + ".csv")
+        COUNTRIES.append(str(k))
         with open(filename, 'wb') as fp:
             csv_writer = csv.writer(fp, delimiter=',')
             csv_writer.writerow(['', 'GDP', 'Price', 'Quantity'])
             for key, val in REG[k].iteritems():
-                csv_writer.writerow([key, str(val["GDP"]),
-                                    str(val["price"]),
-                                    str(val["quantity"])])
+                csv_writer.writerow([key, str(math.log(val["GDP"])),
+                                    str(math.log(val["price"])),
+                                    str(math.log(val["quantity"]))])
+
+
+def compute_elastic_regression(country):
+    fp = pd.read_csv(os.path.join(ROOT_DIR + "/REG", str(country) + ".csv"),
+                     index_col=0)
+
+    X = fp[['GDP', 'Price']]
+    y = fp['Quantity']
+
+    X = sm.add_constant(X)
+    est = sm.OLS(y, X).fit()
+
+    betas = est.params
+    errors = est.bse
+    t = est.tvalues
+    p = est.pvalues
+    conf = est.conf_int()
+
+    return betas, errors, t, p, conf
+
+
+def write_result_files():
+    counter = 0
+    filename = os.path.join(ROOT_DIR + "/RESULTS", "Summary" + ".csv")
+    with open(filename, 'wb') as fp:
+        csv_writer = csv.writer(fp, delimiter=',')
+        for country in sorted(COUNTRIES):
+            if counter == 0:
+                csv_writer.writerow(['Country', 'Beta0 (Coeff)',
+                                     'Beta1 (GDP)', 'Beta2 (Price)',
+                                     'e0 (Coeff)', 'e1 (GDP)', 'e2 (Price)',
+                                     't0 (Coeff)', 't1 (GDP)', 't2 (Price)',
+                                     '95%% Coeff. Int (Coeff)',
+                                     '95%% Coeff. Int (GDP)',
+                                     '95%% Coeff. Int (Price)'])
+                counter += 1
+            betas, errors, t, p, conf = compute_elastic_regression(country)
+            csv_writer.writerow([str(country), str(betas[0]), str(betas[1]),
+                                 str(betas[2]), str(errors[0]), str(errors[1]),
+                                 str(errors[2]), str(t[0]), str(t[1]),
+                                 str(t[2]),
+                                 str('[' + str(conf[0][0]) + ', '
+                                     + str(conf[1][0]) + ']'),
+                                 str('[' + str(conf[0][1]) + ', '
+                                     + str(conf[1][1]) + ']'),
+                                 str('[' + str(conf[0][2]) + ', '
+                                     + str(conf[1][2]) + ']')])
+
+
+def close_prompt():
+    print "                  Script Completed Successfully!                  "
+    print "         Find the result summary in ./RESULTS/Summary.csv         "
+    print "------------------------------------------------------------------"
+    pass
 
 
 def main():
     prompt()
     write_regression_files()
+    write_result_files()
+    close_prompt()
 
 
 if __name__ == "__main__":
