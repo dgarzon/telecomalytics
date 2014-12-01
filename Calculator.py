@@ -349,7 +349,6 @@ def prompt():
     parse_fcc_data()
     parse_world_bank_data()
     process_fcc_data()
-    print "------------------------------------------------------------------"
     pass
 
 
@@ -433,6 +432,7 @@ def write_result_files():
 
 
 def close_prompt():
+    print "------------------------------------------------------------------"
     print "                  Script Completed Successfully!                  "
     print "         Find the result summary in ./RESULTS/Summary.csv         "
     print "------------------------------------------------------------------"
